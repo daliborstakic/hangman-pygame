@@ -26,6 +26,10 @@ LETTER_FONT = pygame.font.SysFont('arial', 30)
 RADIUS = 25
 GAP = 15
 
+# Clock
+clock = pygame.time.Clock()
+FPS = 60
+
 
 def render_screen(hangman_status, letters):
     surf.fill(WHITE)
@@ -59,13 +63,15 @@ def initialize_letters():
 
 
 def main():
-    # Hangman variables
+    # Game variables
     hangman_status = 0
     letters = initialize_letters()
 
     run = True
 
     while run:
+        clock.tick(FPS)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
