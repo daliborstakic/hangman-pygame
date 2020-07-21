@@ -21,7 +21,8 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
 # Fonts
-LETTER_FONT = pygame.font.SysFont('arial', 30)
+LETTER_FONT = pygame.font.SysFont('helvetica', 30)
+DISPLAY_FONT = pygame.font.SysFont('helvetica', 50)
 
 # Circle parameters
 RADIUS = 25
@@ -32,11 +33,21 @@ clock = pygame.time.Clock()
 FPS = 60
 
 
-def render_screen(hangman_status, letters):
+def render_screen(letters):
     surf.fill(WHITE)
     surf.blit(hangman_images[hangman_status], (70, (HEIGHT - hangman_images[hangman_status].get_height()) // 2 - 80))
 
     # Displaying the word
+    display_word = ""
+
+    for letter in word:
+        if letter in guessed:
+            display_word += letter + " "
+        else:
+            display_word += "_ "
+
+    shown_word = DISPLAY_FONT.render(display_word, 1, BLACK)
+    surf.blit(shown_word, (400, 200))
 
     for letter in letters:
         x, y, char, visible = letter
@@ -77,9 +88,13 @@ def click(letters):
             dis = math.sqrt((x - m_x) ** 2 + (y - m_y) ** 2)
             if dis < RADIUS:
                 letter[3] = False
-                guessed.append(letter)
+                guessed.append(char)
                 if char not in word:
                     hangman_status += 1
+
+
+def display_message(content):
+    pass
 
 
 def main():
@@ -88,7 +103,7 @@ def main():
 
     hangman_status = 0
     letters = initialize_letters()
-    word = "pygame"  # It can be changed through code
+    word = "PYGAME"  # It can be changed through code
     guessed = []
 
     run = True
@@ -102,7 +117,7 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 click(letters)
 
-        render_screen(hangman_status, letters)
+        render_screen(letters)
 
     pygame.quit()
 
