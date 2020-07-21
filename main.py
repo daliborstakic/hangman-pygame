@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 
 pygame.init()
 
@@ -93,8 +94,20 @@ def click(letters):
                     hangman_status += 1
 
 
+def has_won():
+    won = True
+    for letter in word:
+        if letter not in guessed:
+            won = False
+
+    return won
+
+
 def display_message(content):
-    pass
+    surf.fill(WHITE)
+    message = DISPLAY_FONT.render(content, 1, BLACK)
+    surf.blit(message, ((WIDTH - message.get_width()) // 2, (HEIGHT - message.get_height()) // 2))
+    pygame.display.update()
 
 
 def main():
@@ -103,7 +116,8 @@ def main():
 
     hangman_status = 0
     letters = initialize_letters()
-    word = "PYGAME"  # It can be changed through code
+    words = ["PYGAME", "PYTHON", "GITHUB", "PROGRAMMING", "CODING", "HANGMAN"]
+    word = random.choice(words)  # It can be changed through code
     guessed = []
 
     run = True
@@ -113,13 +127,25 @@ def main():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
+                pygame.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 click(letters)
 
         render_screen(letters)
 
-    pygame.quit()
+        if has_won():
+            pygame.time.delay(1000)
+            display_message("You won!")
+            pygame.time.delay(3000)
+            run = False
+
+        if hangman_status >= 6:
+            pygame.time.delay(1000)
+            display_message("You lost!")
+            pygame.time.delay(3000)
+            run = False
 
 
-main()
+while True:
+    if __name__ == '__main__':
+        main()
