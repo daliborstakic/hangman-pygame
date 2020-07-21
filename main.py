@@ -1,4 +1,5 @@
 import pygame
+import math
 
 pygame.init()
 
@@ -35,12 +36,14 @@ def render_screen(hangman_status, letters):
     surf.fill(WHITE)
     surf.blit(hangman_images[hangman_status], (70, (HEIGHT - hangman_images[hangman_status].get_height()) // 2 - 80))
 
+    # Displaying the word
+
     for letter in letters:
         x, y, char, visible = letter
         if visible:
             pygame.draw.circle(surf, BLACK, (x, y), RADIUS, 3)
             text = LETTER_FONT.render(char, 1, BLACK)
-            surf.blit(text, (x - text.get_width() / 2, y - text.get_height() / 2))
+            surf.blit(text, (x - text.get_width() // 2, y - text.get_height() // 2))
 
     pygame.display.update()
 
@@ -62,10 +65,31 @@ def initialize_letters():
     return letters
 
 
+def click(letters):
+    global hangman_status
+
+    # Get mouse coordinates
+    m_x, m_y = pygame.mouse.get_pos()
+
+    for letter in letters:
+        x, y, char, visible = letter
+        if visible:
+            dis = math.sqrt((x - m_x) ** 2 + (y - m_y) ** 2)
+            if dis < RADIUS:
+                letter[3] = False
+                guessed.append(letter)
+                if char not in word:
+                    hangman_status += 1
+
+
 def main():
     # Game variables
+    global hangman_status, word, guessed
+
     hangman_status = 0
     letters = initialize_letters()
+    word = "pygame"  # It can be changed through code
+    guessed = []
 
     run = True
 
@@ -75,6 +99,8 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                click(letters)
 
         render_screen(hangman_status, letters)
 
